@@ -1,17 +1,19 @@
+import { IonicModule } from '@ionic/angular';
+import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { IonicPageModule } from 'ionic-angular';
-import { IonicStorageModule} from "@ionic/storage";
-import { HomePage } from './home';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { HomePage } from './home.page';
 
 @NgModule({
   declarations: [
     HomePage,
   ],
   imports: [
-    IonicPageModule.forChild(HomePage),
-    TranslateModule.forChild(),
-    IonicStorageModule.forRoot(),
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    RouterModule.forChild([{ path: '', component: HomePage }])
   ],
   exports: [
     HomePage

@@ -3,6 +3,7 @@ import {LoadingController, ModalController, NavController, ToastController} from
 import { Storage } from '@ionic/storage';
 import {Api, Menus, User} from '../../providers';
 import { BaseUI } from '../baseUI';
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -25,9 +26,9 @@ export class HomePage extends BaseUI {
     super();
     // this.currentItems = this.items.query();
     // this.gridList = this.currentItems;
-    this.storage.get('USER_INFO').then(res => {
-      this.username = res;
-    });
+    // storage.get('USER_INFO').then(res => {
+    //   this.username = res;
+    // });
     // this.username = this.user._user.username;
     this.version = this.api.version;
   }
@@ -68,33 +69,33 @@ export class HomePage extends BaseUI {
   //   addModal.present();
   // }
 
-  // openItem(item: any) {
-  //   if(item.link_url)
-  //     this.navCtrl.push(item.link_url, { });
-  // }
+  openItem(item: any) {
+    // if(item.link_url)
+    //   this.navCtrl.push(item.link_url, { });
+  }
 
-  // getRowListByGridList(size) {
-  //   var rowList = []
-  //   for (var i = 0; i < this.gridList.length; i += size) {
-  //     rowList.push(this.gridList.slice(i, i + size));
-  //   }
-  //   return rowList
-  // }
+  getRowListByGridList(size) {
+    // var rowList = []
+    // for (var i = 0; i < this.gridList.length; i += size) {
+    //   rowList.push(this.gridList.slice(i, i + size));
+    // }
+    // return rowList
+  }
 
-  // goSetting(){
-  //   this.navCtrl.push('SettingsPage', { });
-  // }
+  goSetting(){
+    // this.navCtrl.push('SettingsPage', { });
+  }
 
-  // logout(){
-  //   this.user.logout().subscribe((re) => {
-  //     setTimeout(() => {
-  //       this.app.getRootNav().setRoot('LoginPage', {}, {
-  //         animate: true,
-  //         direction: 'forward'
-  //       });
-  //     });
-  //   }, (r) => {
-  //     alert('注销失败');
-  //   });
-  // }
+  logout(){
+    // this.user.logout().subscribe((re) => {
+    //   setTimeout(() => {
+    //     this.app.getRootNav().setRoot('LoginPage', {}, {
+    //       animate: true,
+    //       direction: 'forward'
+    //     });
+    //   });
+    // }, (r) => {
+    //   alert('注销失败');
+    // });
+  }
 }
