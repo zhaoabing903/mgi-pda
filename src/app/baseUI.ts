@@ -1,4 +1,4 @@
-import { Loading, LoadingController, ToastController, Toast, AlertController, Alert} from 'ionic-angular';
+import { LoadingController, ToastController,  AlertController} from '@ionic/angular';
 
 // /**
 //  * UI 层的所有公用方法的抽象类
@@ -21,12 +21,13 @@ export abstract class BaseUI {
   //  * @memberof BaseUI
   //  */
   protected showLoading(loadingCtrl: LoadingController,
-                        message: string): Loading {
+                        message: string): any {
     let loader = loadingCtrl.create({
-      content: message,
-      dismissOnPageChange: true //页面变化的时候自动关闭 loading
+      message: message,
+      keyboardClose:true,
+      backdropDismiss:true//页面变化的时候自动关闭 loading
     });
-    loader.present();
+    // loader.present();
     return loader;
   }
 
@@ -40,7 +41,7 @@ export abstract class BaseUI {
   //  * @returns {Toast}
   //  * @memberof BaseUI
   //  */
-  protected showToast(toastCtrl: ToastController, message: string, css?: string): Toast {
+  protected showToast(toastCtrl: ToastController, message: string, css?: string): any {
     let toast = toastCtrl.create({
       message: message,
       duration: 5000, //默认展示的时长
@@ -49,19 +50,19 @@ export abstract class BaseUI {
       showCloseButton: true,
       closeButtonText: '关闭',
     });
-    toast.present();
+    // toast.present();
     return toast;
   }
 
-  public showMessageBox(alertCtrl:AlertController, message: string, title: string): Alert{
+  public showMessageBox(alertCtrl:AlertController, message: string, title: string): any{
     let alert = alertCtrl.create({
-      title: title,
+      header: title,
       message:message,
       buttons:[{
         text:'确认'
       }]
     });
-    alert.present();
+    // alert.present();
     return alert;
   }
 }

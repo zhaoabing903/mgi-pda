@@ -1,5 +1,8 @@
+import { IonicModule } from '@ionic/angular';
+import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from 'ionic-angular';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { OutJisPage } from './out-jis';
 
 @NgModule({
@@ -7,7 +10,10 @@ import { OutJisPage } from './out-jis';
     OutJisPage,
   ],
   imports: [
-    IonicPageModule.forChild(OutJisPage),
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    RouterModule.forChild([{ path: '', component: OutJisPage }])
   ],
 })
 export class OutJisPageModule {}

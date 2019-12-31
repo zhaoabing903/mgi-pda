@@ -1,33 +1,33 @@
 <ion-header>
-  <ion-navbar color="primary">
+  <ion-toolbar color="primary">
     <ion-title>JIS出库</ion-title>
     <ion-buttons end>
       <button ion-button color="light">源仓库:{{item.workshop}}</button>
     </ion-buttons>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <form (submit)="scanBox()" *ngIf="item.target">
     <ion-searchbar #searchbar placeholder="{{barTextHolderText}}" [(ngModel)]="label" name="scan"></ion-searchbar>
   </form>
-  <ion-list>
+  <!-- <ion-list>
     <ion-item>
       <ion-label color="primary">去向车间</ion-label>
       <ion-select [(ngModel)]="item.target" interface="popover" okText="选择" cancelText="取消" placeholder="请选择">
         <ion-option *ngFor="let t of workshop_list" value="{{t.value}}">{{t.text}}</ion-option>
       </ion-select>
     </ion-item>
-  </ion-list>
+  </ion-list> -->
   <div>
-    <div class="ds-box" *ngFor="let p of item.parts; let i = index">
+    <!-- <div class="ds-box" *ngFor="let p of item.parts; let i = index">
       <h4><ion-icon name="checkmark-circle-outline" style="color:green" *ngIf="i==0"></ion-icon> 零件：{{p.part_no}} {{p.part_name}}</h4>
       <h5><ion-icon name="contact"></ion-icon> {{p.supplier_name}}</h5>
       <p>当前库存{{p.current_boxes}}箱，共{{p.current_parts}}件（包装数{{p.std_qty}}）</p>
       <button ion-button item-end (click)="changeQty(p)" [color]="p.require_parts%p.std_qty>0?'danger':'primary'">
         出库{{p.require_boxes}}箱，共{{p.require_parts}}件
       </button>
-    </div>
+    </div> -->
   </div>
   <ul class="alert-message">
     <li *ngFor="let e of errors" [ngClass]="{'danger': e.type===0, 'info': e.type===1,  'success': e.type===2}">{{e.time|date:'mm:ss'}}&nbsp;{{e.message}}</li>
