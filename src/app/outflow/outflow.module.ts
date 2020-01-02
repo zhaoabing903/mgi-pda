@@ -3,17 +3,17 @@ import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { OutJisPage } from './out-jis';
+import { OutFlowPage } from './outflow';
 
 @NgModule({
   declarations: [
-    OutJisPage,
+    OutFlowPage,
   ],
   imports: [
     IonicModule,
     CommonModule,
     FormsModule,
-    RouterModule.forChild([{ path: '', component: OutJisPage }])
+    RouterModule.forChild([{ path: '', component: OutFlowPage }])
   ],
 })
-export class OutJisPageModule {}
+export class OutFlowPageModule {}

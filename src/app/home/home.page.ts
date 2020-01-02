@@ -1,9 +1,10 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import {IonApp,LoadingController, ModalController, NavController, ToastController} from '@ionic/angular';
+import {IonApp,LoadingController, ModalController, ToastController} from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import {Api, Menus, User} from '../../providers';
 import { BaseUI } from '../baseUI';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,7 @@ export class HomePage extends BaseUI {
   workshop: string;
   username: string;
   version: string;
-  constructor(public navCtrl: NavController,
+  constructor(public router: Router,
               public items: Menus,
               public toastCtrl: ToastController,
               public loadingCtrl: LoadingController,
@@ -49,7 +50,7 @@ export class HomePage extends BaseUI {
         // this.workshop = res;
       }
     });
-    const loading = super.showLoading(this.loadingCtrl, '加载中...');
+    super.showLoading(this.loadingCtrl, '加载中...');
 
     this.api.get('system/getMenus').subscribe((res: any)=>{
       if(res.successful){
@@ -57,11 +58,11 @@ export class HomePage extends BaseUI {
       }else{
         super.showToast(this.toastCtrl, res.message, 'error');
       }
-      // loading.dismiss();
+      this.loadingCtrl.dismiss();
       
     },(err)=>{
       super.showToast(this.toastCtrl, '系统错误', 'error');
-      // loading.dismiss();
+      this.loadingCtrl.dismiss();
     })
   }
   
@@ -82,7 +83,8 @@ export class HomePage extends BaseUI {
   }
 
   openItem(item: any) {
-    // if(item.link_url)
+    if(item.link_url)
+      this.router.navigateByUrl('/'+item.link_url);
     //   this.navCtrl.push(item.link_url, { });
   }
 

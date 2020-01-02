@@ -8,8 +8,7 @@ import { LoadingController, ToastController,  AlertController} from '@ionic/angu
 //  * @class BaseUI
 //  */
 export abstract class BaseUI {
-  constructor() {
-  }
+  constructor() {}
 
   // /**
   //  * 通用的展示 loading 的组件
@@ -20,17 +19,16 @@ export abstract class BaseUI {
   //  * @returns {Loading}
   //  * @memberof BaseUI
   //  */
-  protected showLoading(loadingCtrl: LoadingController,
-                        message: string): any {
-    let loader = loadingCtrl.create({
+  async showLoading(loadingCtrl: LoadingController,
+                        message: string)  {
+    let loader =await loadingCtrl.create({
       message: message,
       keyboardClose:true,
       backdropDismiss:true//页面变化的时候自动关闭 loading
     });
-    // loader.present();
+    // return await loader.present();
     return loader;
   }
-
 
   // /**
   //  * 通用的展示 toast 的组件
@@ -41,28 +39,38 @@ export abstract class BaseUI {
   //  * @returns {Toast}
   //  * @memberof BaseUI
   //  */
-  protected showToast(toastCtrl: ToastController, message: string, css?: string): any {
-    let toast = toastCtrl.create({
+  async showToast(toastCtrl: ToastController, message: string, css?: string) {
+    const toast =await toastCtrl.create({
       message: message,
       duration: 5000, //默认展示的时长
       position: 'bottom',
       cssClass: css? css: 'tip',
       showCloseButton: true,
-      closeButtonText: '关闭',
+      closeButtonText: 'close',
     });
-    // toast.present();
-    return toast;
+    toast.present();
+    //return toast;
   }
 
-  public showMessageBox(alertCtrl:AlertController, message: string, title: string): any{
-    let alert = alertCtrl.create({
+  async showMessageBox(alertCtrl:AlertController, message: string, title: string){
+    let alert =await alertCtrl.create({
       header: title,
       message:message,
-      buttons:[{
-        text:'确认'
-      }]
+      buttons: ['OK']
     });
-    // alert.present();
-    return alert;
+    return alert.present();;
   }
+
+  async presentAlert(alertCtrl:AlertController,message:string) {
+    const alert = await alertCtrl.create({
+      header: 'Toast',
+      // subHeader: 'Subtitle',
+      message: message,
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
+
 }

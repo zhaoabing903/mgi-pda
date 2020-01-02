@@ -1,14 +1,15 @@
 <ion-header>
 
-  <ion-toolbar >
+  <ion-toolbar color="primary">
     <ion-title>首页 <small>{{username}}</small></ion-title>
-    <ion-buttons end>
-      <button ion-button icon-only (click)="logout()">
+    <ion-buttons  slot="end">
+ 
+      <ion-button icon-only (click)="logout()" color="primary" fill="solid">
         <ion-icon name="ios-power">登出</ion-icon>
-      </button>
-      <button ion-button icon-only (click)="goSetting()">
+      </ion-button>
+      <ion-button icon-only (click)="goSetting()" color="primary" fill="solid">
         <ion-icon name="ios-settings"></ion-icon>
-      </button>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 
@@ -19,7 +20,7 @@
     <ion-row *ngFor="let rowList of getRowListByGridList(2)">
       <ion-col *ngFor="let item of rowList">
         <button (click)="openItem(item)">
-          <p><ion-icon name="{{item.image_url}}" class="ion-icon-big"></ion-icon></p>
+          <p><ion-icon name="{{item.image_url}}" size="large"></ion-icon></p>
           <p *ngIf="item.link_url">{{item.menu_name}}</p>
         </button>
       </ion-col>
@@ -27,6 +28,8 @@
   </ion-grid>
 </ion-content>
 
-<ion-footer>
-  <ion-label text-center>上汽通用五菱河西物流执行系统 &copy;2019&nbsp;V{{version}}</ion-label>
+<ion-footer >
+  <ion-toolbar text-center>
+    <ion-title>上汽通用五菱物流执行系统 &copy;2020&nbsp;V{{version}}</ion-title>
+  </ion-toolbar>  
 </ion-footer>

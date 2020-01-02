@@ -3,7 +3,6 @@ import {
   LoadingController,
   ModalController,
   NavController,
-  NavParams, IonSearchbar,
   ToastController
 } from '@ionic/angular';
 import {BaseUI} from '../baseUI';
@@ -12,16 +11,16 @@ import {Storage} from '@ionic/storage';
 // import {fromEvent} from "rxjs/observable/fromEvent";
 
 @Component({
-  selector: 'page-OutJis',
-  templateUrl: 'out-jis.html',
+  selector: 'page-OutFlow',
+  templateUrl: 'outflow.html',
 })
 
 // @Component({
-//   selector: 'page-OutJis',
+//   selector: 'page-OutFlow',
 //   templateUrl: 'page.page.html',
 //   styleUrls: ['home.page.scss'],
 // })
- export class OutJisPage extends BaseUI {
+ export class OutFlowPage extends BaseUI {
   @ViewChild('searchbar',{static:false}) searchbar: any;
   fetching: boolean = false;
   label: string = '';                      //记录扫描编号
@@ -35,7 +34,7 @@ import {Storage} from '@ionic/storage';
   };
   keyPressed: any;
   errors: any[] = [];
-  constructor(public navParams: NavParams,
+  constructor(
               private navCtrl: NavController,
               public toastCtrl: ToastController,
               public loadingCtrl: LoadingController,

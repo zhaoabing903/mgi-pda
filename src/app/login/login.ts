@@ -1,9 +1,10 @@
 import {Component, ViewChild, Injector} from '@angular/core';
-import { NavController, ToastController, LoadingController } from '@ionic/angular';
+import { NavController, LoadingController, ToastController } from '@ionic/angular';
 
 import {Api, User} from '../../providers';
-import { HomePage, BaseUI } from '../';
+import { BaseUI } from '../';
 import { Router } from '@angular/router';
+import { NgForm } from '@angular/forms';
 // import {Storage} from "@ionic/storage";
 
 
@@ -21,6 +22,7 @@ export class LoginPage extends BaseUI{
     password: ''
   };
 
+
   constructor(
     private injector: Injector,
     public navCtrl: NavController,
@@ -28,10 +30,11 @@ export class LoginPage extends BaseUI{
     public user: User,
     public toastCtrl: ToastController,
     public loadingCtrl: LoadingController,
-    public api: Api
+    public api: Api,
+    
               ) {
     super();
-    // this.version = this.api.version;
+    this.version = this.api.version;
   }
 
   ionViewDidLoad() {
@@ -54,32 +57,27 @@ export class LoginPage extends BaseUI{
   }
 
   doLogin() {
-      if(!this.account.name|| !this.account.password){
-
+      if(!this.account.name|| !this.account.password ){
         super.showToast(this.toastCtrl, '请输入用户名密码');
         this.setFocus();
         return;
       }
 
-      // let loading = super.showLoading(this.loadingCtrl, "登录中...");
+
+      super.showLoading(this.loadingCtrl, "登录中...");
       
       this.user.login(this.account).subscribe((resp) => {
-        // loading.dismiss();
-        //this.navCtrl.push(MainPage);
+        
+
+        this.loadingCtrl.dismiss();
         this.user._loggedIn(resp);
     
 
         setTimeout(() => this.injector.get(Router).navigateByUrl('/home'));
-
-        // this.navCtrl.navigateRoot(HomePage,  {
-        //   animated: true,
-        //   animationDirection: 'forward'
-        // });
       }, (err) => {
-        // loading.dismiss();
-        super.showToast(this.toastCtrl, '登录失败' + err);
+        this.loadingCtrl.dismiss();
+        super.showToast(this.toastCtrl, '登录失败：' + err);
       });
-
 
   }
 
