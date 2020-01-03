@@ -1,26 +1,52 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>JIS出库</ion-title>
-    <ion-buttons end>
-      <button ion-button color="light">源仓库:{{item.workshop}}</button>
+    <ion-title>flowTube</ion-title>
+    <ion-buttons  slot="start">
+      <ion-button color="light" icon-only (click)="back()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons  slot="end">
+      <ion-button color="light">plant:{{q.plant}}</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <form (submit)="scanBox()" *ngIf="item.target">
-    <ion-searchbar #searchbar placeholder="{{barTextHolderText}}" [(ngModel)]="label" name="scan"></ion-searchbar>
-  </form>
-  <!-- <ion-list>
+  <ion-list>
     <ion-item>
-      <ion-label color="primary">去向车间</ion-label>
-      <ion-select [(ngModel)]="item.target" interface="popover" okText="选择" cancelText="取消" placeholder="请选择">
-        <ion-option *ngFor="let t of workshop_list" value="{{t.value}}">{{t.text}}</ion-option>
+      <ion-label>workshop</ion-label>
+      <ion-select #selectworkshop interface="action-sheet" name="workshop" [(ngModel)]="q.workshop" placeholder="Please choose workshop">
+        <ion-select-option *ngFor="let t of workshop_list" value="{{t.value}}">{{t.text}}</ion-select-option>
       </ion-select>
     </ion-item>
-  </ion-list> -->
+  </ion-list>
+  <form (submit)="scanBox()" *ngIf="q.workshop">
+    <ion-searchbar #searchbar placeholder="{{barTextHolderText}}" [(ngModel)]="q.label" name="scan"></ion-searchbar>
+  </form>
+
+  <ion-list #flowtubeList >
+    <ion-item-group *ngFor="let item of data" >
+      <ion-item-sliding #slidingItem  [attr.track]="'3'">
+        <ion-item>
+          <ion-label>
+            <h3>card no:{{item.card_code}}</h3>
+            <p>
+              part no:<b>{{item.part_code}}</b>; packing qty:{{item.packing_qty}}; pack count: <b>{{item.pack_count}}</b>; uloc:{{item.uloc}}
+            </p>
+          </ion-label>
+        </ion-item>
+        <ion-item-options>
+          <ion-item-option color="danger" (click)="removeData(item)">
+            remove
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-item-group>
+  </ion-list>
+
   <div>
-    <!-- <div class="ds-box" *ngFor="let p of item.parts; let i = index">
+    <!-- <div class="ds-box" *ngFor="let p of q.parts; let i = index">
       <h4><ion-icon name="checkmark-circle-outline" style="color:green" *ngIf="i==0"></ion-icon> 零件：{{p.part_no}} {{p.part_name}}</h4>
       <h5><ion-icon name="contact"></ion-icon> {{p.supplier_name}}</h5>
       <p>当前库存{{p.current_boxes}}箱，共{{p.current_parts}}件（包装数{{p.std_qty}}）</p>
@@ -37,10 +63,10 @@
 <ion-footer>
   <ion-row>
     <ion-col no-padding>
-      <button no-margin ion-button full large color="light" (click)="cancel()">取消(F2)</button>
+      <ion-button no-margin  full large color="light" (click)="cancel()">cancel(F2)</ion-button>
     </ion-col>
     <ion-col no-padding>
-      <button no-margin ion-button full large color="primary" [disabled]="!item.parts.length" (click)="jisOutStock()">出库(F1)</button>
+      <ion-button no-margin full large color="primary" [disabled]="!data.length" (click)="OutStock()">ok(F1)</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

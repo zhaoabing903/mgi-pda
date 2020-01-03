@@ -1,3 +1,19 @@
-page-OutFlow {
+$categories: (
+  1 :#f5f37c,
+  2: #ac282b,
+  3: #8e8d93,
+  4: #fe4c52,
+  5: #fd8b2d,
+  6: #fed035,
+  7: #69bb7b,
+  8: #3bc7c4,
+  9: #b16be3,
+  0: #6600cc
+);
 
+@each $track, $value in map-remove($categories) {
+  ion-item-sliding[track='#{$track}'] ion-label {
+    border-left: 2px solid $value;
+    padding-left: 10px;
+  }
 }

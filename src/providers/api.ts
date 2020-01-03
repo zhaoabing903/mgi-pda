@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
  */
 @Injectable()
 export class Api {
-  public plant: string = '1000';
+  public plant: string = 'MG01';
   public version: string = 'T-191230';
   public api_host: string = 'http://localhost:49280/';
   //public api_host: string = 'http://localhost/lesapi';
