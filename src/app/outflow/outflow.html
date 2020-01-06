@@ -15,7 +15,7 @@
 <ion-content>
   <ion-list>
     <ion-item>
-      <ion-label>workshop</ion-label>
+      <ion-label>Target Workshop</ion-label>
       <ion-select #selectworkshop interface="action-sheet" name="workshop" [(ngModel)]="q.workshop" placeholder="Please choose workshop">
         <ion-select-option *ngFor="let t of workshopList" value="{{t.value}}">{{t.text}}</ion-select-option>
       </ion-select>

@@ -114,16 +114,10 @@ export class OutFlowPage extends BaseUI implements OnInit {
         (res: any) => {
           if (res.successful) {
             this.workshopList = res.data;
-            if (
-              this.q.workshop === undefined ||
-              this.workshopList.findIndex(p => p.value === this.q.workshop) ===
-                -1
-            ) {
+            if (this.q.workshop === undefined || this.workshopList.findIndex(p => p.value === this.q.workshop) === -1) {
               this.q.workshop = this.workshopList[0].value;
             } else {
-              this.selectworkshop.selectedText = this.workshopList.find(
-                p => p.value === this.q.workshop
-              ).text;
+              this.selectworkshop.selectedText = this.workshopList.find(p => p.value === this.q.workshop).text;
             }
           } else {
             // super.showToast(this.toastCtrl, res.message, 'error');
@@ -133,7 +127,7 @@ export class OutFlowPage extends BaseUI implements OnInit {
           // loading.dismiss();
         },
         err => {
-          this.insertError('system error!', 1);
+          this.insertError('System error!', 1);
           this.setFocus();
           // loading.dismiss();
         }
@@ -143,7 +137,7 @@ export class OutFlowPage extends BaseUI implements OnInit {
   // 扫箱
   scanBox() {
     if (!this.q.label || this.q.label.length !== 4) {
-      this.insertError('Invalid label, please rescan', 1);
+      this.insertError('Invalid label. Please scan another label, the error label is ' + this.q.label, 0);
       this.setFocus();
       return;
     }
@@ -165,8 +159,7 @@ export class OutFlowPage extends BaseUI implements OnInit {
 
     // 不存在的零件，查询出零件信息，再push到list中
     // let loading = super.showLoading(this.loadingCtrl, '加载中...');
-    this.api
-      .post('dd/getScanFlow', {
+    this.api.post('dd/getScanFlow', {
         plant: this.q.plant,
         workshop: this.q.workshop,
         ScanCode: this.q.label
