@@ -17,3 +17,7 @@ $categories: (
     padding-left: 10px;
   }
 }
+
+ul.alert-message> li.danger{font-size: 12px; color:#ac282b;}
+ul.alert-message> li.info{font-size: 12px; color:#3bc7c4;}
+ul.alert-message> li.success{font-size: 12px; color:#69bb7b;}

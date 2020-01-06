@@ -1,13 +1,13 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>flowTube</ion-title>
+    <ion-title>Scan Flow Pipe Rack Label</ion-title>
     <ion-buttons  slot="start">
       <ion-button color="light" icon-only (click)="back()">
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-buttons  slot="end">
-      <ion-button color="light">plant:{{q.plant}}</ion-button>
+      <ion-button color="light">Plant: {{q.plant}}</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -17,7 +17,7 @@
     <ion-item>
       <ion-label>workshop</ion-label>
       <ion-select #selectworkshop interface="action-sheet" name="workshop" [(ngModel)]="q.workshop" placeholder="Please choose workshop">
-        <ion-select-option *ngFor="let t of workshop_list" value="{{t.value}}">{{t.text}}</ion-select-option>
+        <ion-select-option *ngFor="let t of workshopList" value="{{t.value}}">{{t.text}}</ion-select-option>
       </ion-select>
     </ion-item>
   </ion-list>
@@ -56,17 +56,19 @@
     </div> -->
   </div>
   <ul class="alert-message">
-    <li *ngFor="let e of errors" [ngClass]="{'danger': e.type===0, 'info': e.type===1,  'success': e.type===2}">{{e.time|date:'mm:ss'}}&nbsp;{{e.message}}</li>
+    <li *ngFor="let e of errors" [ngClass]="{'danger': e.type===0, 'info': e.type===1, 'success': e.type===2}">
+      {{e.time|date:'mm:ss'}}&nbsp;{{e.message}}
+    </li>
   </ul>
 </ion-content>
 
 <ion-footer>
   <ion-row>
     <ion-col no-padding>
-      <ion-button no-margin  full large color="light" (click)="cancel()">cancel(F2)</ion-button>
+      <ion-button no-margin expand='full' size='large' color="light" (click)="reset()">Reset(F2)</ion-button>
     </ion-col>
     <ion-col no-padding>
-      <ion-button no-margin full large color="primary" [disabled]="!data.length" (click)="OutStock()">ok(F1)</ion-button>
+      <ion-button no-margin expand='full' size='large' color="primary" [disabled]="!data.length" (click)="submit()">Submit(F1)</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

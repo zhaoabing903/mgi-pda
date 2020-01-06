@@ -1,45 +1,46 @@
-import {Component, ViewChild, Injector} from '@angular/core';
-import { NavController, LoadingController, ToastController } from '@ionic/angular';
+import { Component, ViewChild, Injector } from '@angular/core';
+import {
+  NavController,
+  LoadingController,
+  ToastController
+} from '@ionic/angular';
 
-import {Api, User} from '../../providers';
+import { Api, User } from '../../providers';
 import { BaseUI } from '../';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
-// import {Storage} from "@ionic/storage";
-
+// import {Storage} from '@ionic/storage';
 
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html'
 })
-export class LoginPage extends BaseUI{
-  @ViewChild('userName',{static:false}) usernameInput:any;
-  //workshops: any[] = [];
+export class LoginPage extends BaseUI {
+  @ViewChild('userName', { static: false }) usernameInput: any;
+  // workshops: any[] = [];
   version: string;
   workshop: string;
-  account: { name: string, password: string } = {
+  account: { name: string; password: string } = {
     name: '',
     password: ''
   };
 
-
   constructor(
     private injector: Injector,
     public navCtrl: NavController,
-    //private storage: Storage,
+    // private storage: Storage,
     public user: User,
     public toastCtrl: ToastController,
     public loadingCtrl: LoadingController,
-    public api: Api,
-    
-              ) {
+    public api: Api
+  ) {
     super();
     this.version = this.api.version;
   }
 
   ionViewDidLoad() {
     this.setFocus();
-    /*let loading = super.showLoading(this.loadingCtrl, "正在加载数据...");
+    /*let loading = super.showLoading(this.loadingCtrl, '正在加载数据...');
     setTimeout(() => {
       this.api.get('system/getPlants', {plant: this.api.plant}).subscribe((res: any) => {
           loading.dismiss();
@@ -57,33 +58,31 @@ export class LoginPage extends BaseUI{
   }
 
   doLogin() {
-      if(!this.account.name|| !this.account.password ){
-        super.showToast(this.toastCtrl, '请输入用户名密码');
-        this.setFocus();
-        return;
-      }
+    if (!this.account.name || !this.account.password) {
+      super.showToast(this.toastCtrl, 'Please input your password.');
+      this.setFocus();
+      return;
+    }
 
+    super.showLoading(this.loadingCtrl, 'Please wait...');
 
-      super.showLoading(this.loadingCtrl, "登录中...");
-      
-      this.user.login(this.account).subscribe((resp) => {
-        
-
+    this.user.login(this.account).subscribe(
+      resp => {
         this.loadingCtrl.dismiss();
         this.user._loggedIn(resp);
-    
 
         setTimeout(() => this.injector.get(Router).navigateByUrl('/home'));
-      }, (err) => {
+      },
+      err => {
         this.loadingCtrl.dismiss();
-        super.showToast(this.toastCtrl, '登录失败：' + err);
-      });
-
+        super.showToast(this.toastCtrl, 'Login failed, ' + err);
+      }
+    );
   }
 
-  setFocus=()=> {
+  setFocus = () => {
     setTimeout(() => {
-      this.usernameInput.setFocus();//为输入框设置焦点
+      this.usernameInput.setFocus(); // 为输入框设置焦点
     }, 150);
   }
 }

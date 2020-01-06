@@ -7,12 +7,12 @@ import { Observable } from 'rxjs';
  */
 @Injectable()
 export class Api {
-  public plant: string = 'MG01';
-  public version: string = 'T-191230';
-  public api_host: string = 'http://localhost:49280/';
-  //public api_host: string = 'http://localhost/lesapi';
-  //public api_host: string = 'http://10.1.126.171/lesapi';
-  //public api_host: string = 'http://10.34.243.14/lesapi';
+  public plant = 'MG01';
+  public version = 'T-191230';
+  public api_host = 'http://localhost:49280';
+  // public api_host: string = 'http://localhost/lesapi';
+  // public api_host: string = 'http://10.1.126.171/lesapi';
+  // public api_host: string = 'http://10.34.243.14/lesapi';
 
   url: string = this.api_host + '/api';
 
@@ -34,8 +34,10 @@ export class Api {
     // Support easy query params for GET requests
     if (params) {
       reqOpts.params = new HttpParams();
-      for (let k in params) {
-        reqOpts.params = reqOpts.params.set(k, params[k]);
+      for(const key in params) {
+        if (params.hasOwnProperty(key)) {
+          reqOpts.params = reqOpts.params.set(key, params[key]);
+        }
       }
     }
     return this.http.get(this.url + '/' + endpoint, reqOpts);

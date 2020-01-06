@@ -1,13 +1,9 @@
-<ion-app>
-
 <ion-header>
-
   <ion-toolbar color="primary">
-    <ion-title>用户登录</ion-title>
-    
+    <ion-title>User Login</ion-title>
     <ion-buttons slot="end">
       <ion-button fill="solid" color="primary">
-        版本{{version}}
+        {{version}}
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -19,14 +15,14 @@
   <form (submit)="doLogin()">
     <ion-list>
       <ion-item>
-        <ion-label position="fixed" color="primary">用户名</ion-label>
+        <ion-label position="fixed" color="primary">Account</ion-label>
       </ion-item>
       <ion-item>
         <ion-input type="text" #userName [(ngModel)]="account.name" name="name" required></ion-input>
       </ion-item>
 
       <ion-item>
-        <ion-label position="fixed" color="primary">登录密码</ion-label>
+        <ion-label position="fixed" color="primary">Password</ion-label>
       </ion-item>
       <ion-item>
        <ion-input type="password" [(ngModel)]="account.password" name="password" required></ion-input>
@@ -38,7 +34,11 @@
         <ion-button color="primary" type="submit" expand="block">Login</ion-button>
       </ion-col>
     </ion-row>
+    <ion-row>
+      <ion-col>
+        <p class="ion-text-center">MGI LES PDA</p>
+      </ion-col>
+    </ion-row>
 
   </form>
 </ion-content>
-</ion-app>
