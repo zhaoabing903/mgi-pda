@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Scan Flow Pipe Rack Label</ion-title>
+    <ion-buttons slot="start">
+      <ion-button color="light" icon-only (click)="back()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button color="light">Plant: {{q.plant}}</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (submit)="scanBox()" *ngIf="q.workshop">
+    <ion-list>
+      <ion-item>
+        <ion-label>Workshop</ion-label>
+        <ion-select #selectworkshop interface="action-sheet" name="workshop" (ionChange)="changeWorkshop($event)"
+          [(ngModel)]="q.workshop" placeholder="Please choose workshop">
+          <ion-select-option *ngFor="let t of workshopList" value="{{t.value}}">{{t.text}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>Supplier</ion-label>
+        <ion-select interface="action-sheet" name="supplier" (ionChange)="changeSupplier($event)"
+          [(ngModel)]="q.supplier" placeholder="Please choose supplier">
+          <ion-select-option *ngFor="let t of supplierList" value="{{t.value}}">{{t.text}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+  </form>
+
+  <ion-list>
+    <ion-item *ngFor="let item of data">
+      <ion-label>
+        <h2>Runsheet No：<strong>{{item.runsheet_code}}</strong></h2>
+        <h3>Publish Time:{{item.publish_time|date:'MM-dd HH:mm'}}</h3>
+        <h3>Runsheet Status:{{item.sheet_status_name}}</h3>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-infinite-scroll threshold="5%" (ionInfinite)="getDatas($event)">
+    <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Loading...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <p class="end" *ngIf="!hasMore">---No more records---</p>
+
+
+</ion-content>
+
+<ion-footer>
+  <ion-row>
+    <ion-col no-padding>
+      <!-- <ion-button no-margin expand='full' size='large' color="light" (click)="reset()">Reset(F2)</ion-button> -->
+    </ion-col>
+    <ion-col no-padding>
+      <!-- <ion-button no-margin expand='full' size='large' color="primary" [disabled]="!data.length" (click)="submit()">
+        {{setp===0?'Submit':'Confirm'}}(F1)</ion-button> -->
+    </ion-col>
+  </ion-row>
+</ion-footer>

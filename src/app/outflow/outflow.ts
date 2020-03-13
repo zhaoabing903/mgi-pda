@@ -44,6 +44,9 @@ export class OutFlowPage extends BaseUI implements OnInit {
   keyPlant = 'kb_plant';
   keyWorkshop = 'kb_workshop';
 
+  ci = 0;
+  setp = 0;
+
   constructor(
     private navCtrl: NavController,
     public toastCtrl: ToastController,
@@ -100,24 +103,23 @@ export class OutFlowPage extends BaseUI implements OnInit {
     this.q.plant = this.api.plant;
 
     this.storage.get(this.keyWorkshop).then(val => {
-      if (val) {
-        this.q.workshop = val;
-      }
-      this.getWorkshops();
+      this.getWorkshops(val);
     });
   }
 
-  private getWorkshops() {
+  private getWorkshops(val) {
     // let loading = super.showLoading(this.loadingCtrl, '加载中...');
     this.api.get('system/getPlants', { plant: this.api.plant, type: 0 })
       .subscribe(
         (res: any) => {
           if (res.successful) {
             this.workshopList = res.data;
-            if (this.q.workshop === undefined || this.workshopList.findIndex(p => p.value === this.q.workshop) === -1) {
-              this.q.workshop = this.workshopList[0].value;
+            if (val) {
+              this.q.workshop = val;
+              // this.selectworkshop.selectedText = this.workshopList.find(p => p.value === this.q.workshop).text;
             } else {
-              this.selectworkshop.selectedText = this.workshopList.find(p => p.value === this.q.workshop).text;
+              this.q.workshop = this.workshopList[0].value;
+              // debugger
             }
           } else {
             // super.showToast(this.toastCtrl, res.message, 'error');
@@ -133,6 +135,11 @@ export class OutFlowPage extends BaseUI implements OnInit {
         }
       );
   }
+  changeWorkshop(e) {
+    const item = this.workshopList.find(p => p.value === this.q.workshop)
+    if (item)
+      e.target.selectedText = item.text;
+  }
 
   // 扫箱
   scanBox() {
@@ -142,28 +149,40 @@ export class OutFlowPage extends BaseUI implements OnInit {
       return;
     }
 
-    const i = this.data.findIndex(
+    // debugger
+    const i = this.data.find(
       p =>
         p.plant_code === this.q.plant &&
         p.workshop_code === this.q.workshop &&
         p.card_code === this.q.label
     );
-    if (i >= 0) {
-      // 已扫过的零件，直接追加
-      this.moveItem(this.data, i, 0);
-      this.data[0].pack_count++;
-      this.data[0].part_count += this.data[0].packing_qty;
+    if (i) {
+      this.ci = i.pi
       this.setFocus();
       return;
     }
+    // const i = this.data.findIndex(
+    //   p =>
+    //     p.plant_code === this.q.plant &&
+    //     p.workshop_code === this.q.workshop &&
+    //     p.card_code === this.q.label
+    // );
+    // if (i >= 0) {
+    //   // 已扫过的零件，直接追加
+    //   this.moveItem(this.data, i, 0);
+    //   this.data[0].pack_count++;
+    //   this.data[0].part_count += this.data[0].packing_qty;
+    //   this.setFocus();
+    //   return;
+    // }
 
     // 不存在的零件，查询出零件信息，再push到list中
     // let loading = super.showLoading(this.loadingCtrl, '加载中...');
     this.api.post('dd/getScanFlow', {
-        plant: this.q.plant,
-        workshop: this.q.workshop,
-        ScanCode: this.q.label
-      })
+      plant: this.q.plant,
+      workshop: this.q.workshop,
+      ScanCode: this.q.label
+    })
       .subscribe(
         (res: any) => {
           if (res.successful) {
@@ -193,11 +212,27 @@ export class OutFlowPage extends BaseUI implements OnInit {
       );
   }
 
+  switchPart(i) {
+    if (i > 0) {
+      if (this.ci < this.data.length - 1) {
+        this.ci++;
+      }
+    } else {
+      if (this.ci > 0) {
+        this.ci--;
+      }
+    }
+  }
+
   addData(e: any[]): boolean {
     const res = false;
+
     e.forEach(p => {
+      p.pi = this.data.length;
       this.data.push(p);
     });
+    this.ci = this.data.length - 1;
+
     if (e.length > 0) {
       this.setCache();
     }
@@ -214,15 +249,15 @@ export class OutFlowPage extends BaseUI implements OnInit {
       this.storage.set(this.keyWorkshop, this.q.workshop);
     }
   }
-  removeData(item: any) {
-    this.data = this.data.filter(
-      p1 =>
-        !(
-          p1.plant_code === item.plant_code &&
-          p1.workshop_code === item.workshop_code &&
-          p1.card_code === item.card_code
-        )
-    );
+  remove(ci: number) {
+    // const i = this.data.findIndex(p => p.box_label === item.box_label);
+    this.data.splice(ci, 1);
+    this.ci = ci > 0 ? ci - 1 : 0;
+    if (!this.data.length) {
+      this.reset();
+    } else {
+      this.setFocus();
+    }
   }
 
   // index是当前元素下标，tindex是拖动到的位置下标。
@@ -240,37 +275,30 @@ export class OutFlowPage extends BaseUI implements OnInit {
     }
   }
   // 非标跳转Modal页
-  changeQty(part) {
-    //   let _m = this.modalCtrl.create({component:UnstandPage, {
-    //     boxes: part.require_boxes,
-    //     parts: part.require_parts,
-    //     std_qty: part.std_qty,
-    //     max_parts: part.current_parts,
-    //   }
-    // });
-    // _m.onDidDismiss(data => {
-    //   if (data) {
-    //     part.require_boxes = data.boxes;
-    //     part.require_parts = data.parts;
-    //   }
-    //   this.setFocus();
-    // });
-    // _m.present();
+  changeQty(item) {
+    item.pack_count = Math.ceil(item.part_count / item.packing_qty);
+  }
+  changeStock(item) {
+    item.part_count = item.MaxStock - item.CurrentStock
   }
 
   // 出库
   submit() {
+    if (this.setp < 1) {
+      this.setp = this.setp + 1
+      return
+    }
     if (this.fetching) {
-      this.insertError('正在提交，请耐心等待，不要重复提交...', 1);
+      this.insertError('Submitting, please waitting, do not submit again...', 1);
       return;
     }
     let err = '';
     if (!this.q.workshop) {
-      err = '请先选择目标车间';
+      err = 'Please select the target workshop first';
       this.insertError(err, 1);
     }
     if (!this.data.length) {
-      err = '请添加出库的零件';
+      err = 'Please scan parts';
       this.insertError(err, 1);
     }
     if (err.length) {
@@ -278,7 +306,7 @@ export class OutFlowPage extends BaseUI implements OnInit {
       return;
     }
     // let loading = super.showLoading(this.loadingCtrl, '正在提交...');
-    this.insertError('正在提交，请稍后...', 1);
+    this.insertError('Submitting, please wait...', 1);
     this.fetching = true;
     this.api.post('dd/submitScanGroupFlow', this.data).subscribe(
       (res: any) => {
@@ -310,7 +338,10 @@ export class OutFlowPage extends BaseUI implements OnInit {
     this.data = [];
   }
   back() {
-    this.navCtrl.back();
+    if (this.setp === 0)
+      this.navCtrl.back();
+    else
+      this.setp = this.setp - 1;
   }
 
   setFocus() {

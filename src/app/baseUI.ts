@@ -12,7 +12,7 @@ import {
 //  * @class BaseUI
 //  */
 export abstract class BaseUI {
-  constructor() {}
+  constructor() { }
 
   // /**
   //  * 通用的展示 loading 的组件

@@ -1,51 +1,69 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Scan Flow Pipe Rack Label</ion-title>
-    <ion-buttons  slot="start">
+    <ion-buttons slot="start">
       <ion-button color="light" icon-only (click)="back()">
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-buttons  slot="end">
+    <ion-buttons slot="end">
       <ion-button color="light">Plant: {{q.plant}}</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item>
-      <ion-label>Target Workshop</ion-label>
-      <ion-select #selectworkshop interface="action-sheet" name="workshop" [(ngModel)]="q.workshop" placeholder="Please choose workshop">
-        <ion-select-option *ngFor="let t of workshopList" value="{{t.value}}">{{t.text}}</ion-select-option>
-      </ion-select>
-    </ion-item>
-  </ion-list>
-  <form (submit)="scanBox()" *ngIf="q.workshop">
-    <ion-searchbar #searchbar placeholder="{{barTextHolderText}}" [(ngModel)]="q.label" name="scan"></ion-searchbar>
-  </form>
+  <div *ngIf="setp===0">
+    <ion-list>
+      <ion-item>
+        <ion-label>Target Workshop</ion-label>
+        <ion-select #selectworkshop interface="action-sheet" name="workshop" [(ngModel)]="q.workshop"
+          placeholder="Please choose workshop">
+          <ion-select-option *ngFor="let t of workshopList" value="{{t.value}}">{{t.text}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+    <form (submit)="scanBox()" *ngIf="q.workshop">
+      <ion-searchbar #searchbar placeholder="{{barTextHolderText}}" [(ngModel)]="q.label" name="scan"></ion-searchbar>
+    </form>
 
-  <ion-list #flowtubeList >
-    <ion-item-group *ngFor="let item of data" >
-      <ion-item-sliding #slidingItem  [attr.track]="'3'">
-        <ion-item>
-          <ion-label>
-            <h3>card no:{{item.card_code}}</h3>
-            <p>
-              part no:<b>{{item.part_code}}</b>; packing qty:{{item.packing_qty}}; pack count: <b>{{item.pack_count}}</b>; uloc:{{item.uloc}}
-            </p>
-          </ion-label>
-        </ion-item>
-        <ion-item-options>
-          <ion-item-option color="danger" (click)="removeData(item)">
-            remove
-          </ion-item-option>
-        </ion-item-options>
-      </ion-item-sliding>
-    </ion-item-group>
-  </ion-list>
+    <ion-list #flowtubeList class="ds-box" *ngIf="ci >= 0 && data.length > ci">
+      <ion-item-group>
+        <ion-item-sliding #slidingItem [attr.track]="'3'">
+          <ion-item>
+            <ion-label>
+              <h3>card no:{{data[ci].card_code}}</h3>
+              <h4>part no:<b>{{data[ci].part_code}}</b>; packing qty:<b>{{data[ci].packing_qty}};</b> pack
+                count:<b>{{data[ci].pack_count}}</b>
+              </h4>
+              <h4>uloc:<b>{{data[ci].uloc}};</b> Min:<b>{{data[ci].MinStock}};</b> Max:<b>{{data[ci].MaxStock}};</b>
+              </h4>
+            </ion-label>
+            <ion-button slot="end" color="danger" (click)="remove(ci)">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <ion-item>
+            <ion-label>CurrentStock:</ion-label>
+            <ion-input [(ngModel)]="data[ci].CurrentStock" (ionChange)="changeStock(data[ci])"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label>Require qty:</ion-label>
+            <ion-input [(ngModel)]="data[ci].part_count" (ionChange)="changeQty(data[ci])"></ion-input>
+          </ion-item>
+          <ion-item *ngIf="data.length">
+            <ion-button item-start (click)="switchPart(-1)" [disabled]="ci===0">
+              <ion-icon name="arrow-back"></ion-icon>
+            </ion-button>
+            <ion-label text-center>{{ci+1}} / {{data.length}}</ion-label>
+            <ion-button item-end (click)="switchPart(1)" [disabled]="ci>=data.length-1">
+              <ion-icon name="arrow-forward"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-item-sliding>
+      </ion-item-group>
+    </ion-list>
 
-  <div>
     <!-- <div class="ds-box" *ngFor="let p of q.parts; let i = index">
       <h4><ion-icon name="checkmark-circle-outline" style="color:green" *ngIf="i==0"></ion-icon> 零件：{{p.part_no}} {{p.part_name}}</h4>
       <h5><ion-icon name="contact"></ion-icon> {{p.supplier_name}}</h5>
@@ -55,6 +73,26 @@
       </button>
     </div> -->
   </div>
+
+  <!-- 确认页面 -->
+  <ion-list #confirmList *ngIf="setp===1" class="ds-box">
+    <ion-item-group *ngFor="let item of data">
+      <ion-item-sliding #slidingItem [attr.track]="'3'">
+        <ion-item>
+          <ion-label>
+            <h3>card no:{{item.card_code}}</h3>
+            <h4>part no:<b>{{item.part_code}}</b>; packing qty:{{item.packing_qty}}; pack
+              count:{{item.pack_count}}
+            </h4>
+            <h4>uloc:{{item.uloc}}; Min:{{item.MinStock}}; Max:{{item.MaxStock}};</h4>
+            <h4>CurrentStock:{{item.CurrentStock}}</h4>
+            <h4>Require qty:{{item.part_count}}</h4>
+          </ion-label>
+        </ion-item>
+      </ion-item-sliding>
+    </ion-item-group>
+  </ion-list>
+
   <ul class="alert-message">
     <li *ngFor="let e of errors" [ngClass]="{'danger': e.type===0, 'info': e.type===1, 'success': e.type===2}">
       {{e.time|date:'mm:ss'}}&nbsp;{{e.message}}
@@ -68,7 +106,8 @@
       <ion-button no-margin expand='full' size='large' color="light" (click)="reset()">Reset(F2)</ion-button>
     </ion-col>
     <ion-col no-padding>
-      <ion-button no-margin expand='full' size='large' color="primary" [disabled]="!data.length" (click)="submit()">Submit(F1)</ion-button>
+      <ion-button no-margin expand='full' size='large' color="primary" [disabled]="!data.length" (click)="submit()">
+        {{setp===0?'Submit':'Confirm'}}(F1)</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>
