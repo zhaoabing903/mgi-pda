@@ -7,7 +7,7 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button color="light">Plant: {{q.plant}}</ion-button>
+      <ion-button color="light">Current user: {{userName}}</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -16,7 +16,7 @@
   <div *ngIf="setp===0">
     <ion-list>
       <ion-item>
-        <ion-label>Target Workshop</ion-label>
+        <ion-label>Workshop</ion-label>
         <ion-select #selectworkshop interface="action-sheet" name="workshop" [(ngModel)]="q.workshop"
           placeholder="Please choose workshop">
           <ion-select-option *ngFor="let t of workshopList" value="{{t.value}}">{{t.text}}</ion-select-option>
@@ -32,9 +32,8 @@
         <ion-item-sliding #slidingItem [attr.track]="'3'">
           <ion-item>
             <ion-label>
-              <h3>card no:{{data[ci].card_code}}</h3>
-              <h4>part no:<b>{{data[ci].part_code}}</b>; packing qty:<b>{{data[ci].packing_qty}};</b> pack
-                count:<b>{{data[ci].pack_count}}</b>
+              <h3>Card no:{{data[ci].card_code}}</h3>
+              <h4>Part no:<b>{{data[ci].part_code}}</b>; Packing qty:<b>{{data[ci].packing_qty}};</b>
               </h4>
               <h4>uloc:<b>{{data[ci].uloc}};</b> Min:<b>{{data[ci].MinStock}};</b> Max:<b>{{data[ci].MaxStock}};</b>
               </h4>
@@ -44,12 +43,12 @@
             </ion-button>
           </ion-item>
           <ion-item>
-            <ion-label>CurrentStock:</ion-label>
+            <ion-label>Current boxes:</ion-label>
             <ion-input [(ngModel)]="data[ci].CurrentStock" (ionChange)="changeStock(data[ci])"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label>Require qty:</ion-label>
-            <ion-input [(ngModel)]="data[ci].part_count" (ionChange)="changeQty(data[ci])"></ion-input>
+            <ion-label>Require boxes:</ion-label>
+            <ion-input [(ngModel)]="data[ci].pack_count" Default="off" (ionChange)="changeQty(data[ci])"></ion-input>
           </ion-item>
           <ion-item *ngIf="data.length">
             <ion-button item-start (click)="switchPart(-1)" [disabled]="ci===0">
@@ -64,14 +63,6 @@
       </ion-item-group>
     </ion-list>
 
-    <!-- <div class="ds-box" *ngFor="let p of q.parts; let i = index">
-      <h4><ion-icon name="checkmark-circle-outline" style="color:green" *ngIf="i==0"></ion-icon> 零件：{{p.part_no}} {{p.part_name}}</h4>
-      <h5><ion-icon name="contact"></ion-icon> {{p.supplier_name}}</h5>
-      <p>当前库存{{p.current_boxes}}箱，共{{p.current_parts}}件（包装数{{p.std_qty}}）</p>
-      <button ion-button item-end (click)="changeQty(p)" [color]="p.require_parts%p.std_qty>0?'danger':'primary'">
-        出库{{p.require_boxes}}箱，共{{p.require_parts}}件
-      </button>
-    </div> -->
   </div>
 
   <!-- 确认页面 -->
@@ -80,13 +71,13 @@
       <ion-item-sliding #slidingItem [attr.track]="'3'">
         <ion-item>
           <ion-label>
-            <h3>card no:{{item.card_code}}</h3>
-            <h4>part no:<b>{{item.part_code}}</b>; packing qty:{{item.packing_qty}}; pack
-              count:{{item.pack_count}}
-            </h4>
+            <h3>Card no:{{item.card_code}}</h3>
+            <h4>Part no:<b>{{item.part_code}}</b>; Packing qty:{{item.packing_qty}};</h4>
             <h4>uloc:{{item.uloc}}; Min:{{item.MinStock}}; Max:{{item.MaxStock}};</h4>
-            <h4>CurrentStock:{{item.CurrentStock}}</h4>
-            <h4>Require qty:{{item.part_count}}</h4>
+            <h4>Current boxes:{{item.CurrentStock}}</h4>
+            <h4>Require boxes:{{item.pack_count}}</h4>
+            <h4>Require pieces:{{item.part_count}}</h4>
+
           </ion-label>
         </ion-item>
       </ion-item-sliding>

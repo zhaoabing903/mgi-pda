@@ -40,9 +40,11 @@ export class OutFlowPage extends BaseUI implements OnInit {
 
   keyPressed: any;
   errors: any[] = [];
+  userName: '';
 
   keyPlant = 'kb_plant';
   keyWorkshop = 'kb_workshop';
+  userInfo = 'USER_INFO';
 
   ci = 0;
   setp = 0;
@@ -105,6 +107,9 @@ export class OutFlowPage extends BaseUI implements OnInit {
     this.storage.get(this.keyWorkshop).then(val => {
       this.getWorkshops(val);
     });
+    this.storage.get(this.userInfo).then(val => {
+      this.userName = val
+    });
   }
 
   private getWorkshops(val) {
@@ -144,7 +149,7 @@ export class OutFlowPage extends BaseUI implements OnInit {
   // 扫箱
   scanBox() {
     if (!this.q.label || this.q.label.length !== 4) {
-      this.insertError('Invalid label. Please scan another label, the error label is ' + this.q.label, 0);
+      this.insertError(`The label(${this.q.label}) is not exist in this workshop.`, 0);
       this.setFocus();
       return;
     }
@@ -161,20 +166,6 @@ export class OutFlowPage extends BaseUI implements OnInit {
       this.setFocus();
       return;
     }
-    // const i = this.data.findIndex(
-    //   p =>
-    //     p.plant_code === this.q.plant &&
-    //     p.workshop_code === this.q.workshop &&
-    //     p.card_code === this.q.label
-    // );
-    // if (i >= 0) {
-    //   // 已扫过的零件，直接追加
-    //   this.moveItem(this.data, i, 0);
-    //   this.data[0].pack_count++;
-    //   this.data[0].part_count += this.data[0].packing_qty;
-    //   this.setFocus();
-    //   return;
-    // }
 
     // 不存在的零件，查询出零件信息，再push到list中
     // let loading = super.showLoading(this.loadingCtrl, '加载中...');
@@ -276,35 +267,68 @@ export class OutFlowPage extends BaseUI implements OnInit {
   }
   // 非标跳转Modal页
   changeQty(item) {
-    item.pack_count = Math.ceil(item.part_count / item.packing_qty);
+    if (item.pack_count)
+      item.part_count = item.packing_qty * item.pack_count;
   }
   changeStock(item) {
-    item.part_count = item.MaxStock - item.CurrentStock
+    if (item.CurrentStock)
+      item.pack_count = item.MaxStock - item.CurrentStock
   }
 
   // 出库
   submit() {
-    if (this.setp < 1) {
-      this.setp = this.setp + 1
-      return
-    }
     if (this.fetching) {
       this.insertError('Submitting, please waitting, do not submit again...', 1);
       return;
     }
-    let err = '';
-    if (!this.q.workshop) {
-      err = 'Please select the target workshop first';
-      this.insertError(err, 1);
+
+    if (this.setp < 1) {
+      //验证
+      let err = '';
+      if (!this.q.workshop) {
+        err = 'Please select the target workshop first';
+        this.insertError(err, 1);
+      }
+      if (!this.data.length) {
+        err = 'Please scan parts';
+        this.insertError(err, 1);
+      }
+      //current stock和request qty必填
+      for (let j = 0, len = this.data.length; j < len; j++) {
+        const item = this.data[j];
+        if (!item.CurrentStock) {
+          err = `Current boxes cannot be empty.`;
+          this.ci = item.pi;
+        }
+        const CurrentStock = Number.parseInt(item.CurrentStock);
+        if (!Number.isInteger(CurrentStock) || CurrentStock <= 0) {
+          err = `Current boxes must be an integer greater than 0.`;
+          this.ci = item.pi;
+        }
+        if (!item.pack_count) {
+          err = `Require boxes cannot be empty.`;
+          this.ci = item.pi;
+        }
+        const packCount = Number.parseInt(item.pack_count);
+        if (!Number.isInteger(packCount) || packCount <= 0) {
+          err = `Require boxes must be an integer greater than 0.`;
+          this.ci = item.pi;
+        }
+        if (err.length) {
+          this.insertError(err, 0);
+          return;
+        }
+      }
+      if (err.length) {
+        this.setFocus();
+        return;
+      }
+
+      //显示确认页
+      this.setp = this.setp + 1
+      return
     }
-    if (!this.data.length) {
-      err = 'Please scan parts';
-      this.insertError(err, 1);
-    }
-    if (err.length) {
-      this.setFocus();
-      return;
-    }
+
     // let loading = super.showLoading(this.loadingCtrl, '正在提交...');
     this.insertError('Submitting, please wait...', 1);
     this.fetching = true;
@@ -347,7 +371,8 @@ export class OutFlowPage extends BaseUI implements OnInit {
   setFocus() {
     this.q.label = '';
     setTimeout(() => {
-      this.searchbar.setFocus();
+      if (this.searchbar)
+        this.searchbar.setFocus();
     }, 200);
   }
 }

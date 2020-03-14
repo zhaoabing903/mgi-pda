@@ -1,19 +1,19 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Scan Flow Pipe Rack Label</ion-title>
+    <ion-title>Runsheet Search</ion-title>
     <ion-buttons slot="start">
       <ion-button color="light" icon-only (click)="back()">
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button color="light">Plant: {{q.plant}}</ion-button>
+      <ion-button color="light">Current user: {{userName}}</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <form (submit)="scanBox()" *ngIf="q.workshop">
+  <form (submit)="getDatas(null)">
     <ion-list>
       <ion-item>
         <ion-label>Workshop</ion-label>

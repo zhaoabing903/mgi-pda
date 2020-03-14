@@ -9,8 +9,8 @@ import { Observable } from 'rxjs';
 export class Api {
   public plant = 'MG01';
   public version = 'T-191230';
-  public api_host = 'http://localhost:49280';
-  // public api_host: string = 'http://localhost/lesapi';
+  // public api_host = 'http://localhost:49280';
+  public api_host: string = 'http://localhost/lesapi';
   // public api_host: string = 'http://10.1.126.171/lesapi';
   // public api_host: string = 'http://10.34.243.14/lesapi';
 
@@ -20,7 +20,7 @@ export class Api {
   constructor(
     public http: HttpClient,
     // public cdr:ChangeDetectorRef,
-    ) {
+  ) {
 
   }
 
@@ -34,7 +34,7 @@ export class Api {
     // Support easy query params for GET requests
     if (params) {
       reqOpts.params = new HttpParams();
-      for(const key in params) {
+      for (const key in params) {
         if (params.hasOwnProperty(key)) {
           reqOpts.params = reqOpts.params.set(key, params[key]);
         }

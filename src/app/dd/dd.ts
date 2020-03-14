@@ -35,9 +35,11 @@ export class DDPage extends BaseUI implements OnInit {
 
   keyPressed: any;
   errors: any[] = [];
+  userName: '';
 
   keyPlant = 'kb_plant';
   keyWorkshop = 'kb_workshop';
+  userInfo = 'USER_INFO';
   hasMore = true;
 
   constructor(
@@ -97,6 +99,9 @@ export class DDPage extends BaseUI implements OnInit {
 
     this.storage.get(this.keyWorkshop).then(val => {
       this.getWorkshops(val);
+    });
+    this.storage.get(this.userInfo).then(val => {
+      this.userName = val
     });
   }
 
