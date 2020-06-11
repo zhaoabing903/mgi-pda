@@ -301,8 +301,8 @@ export class OutFlowPage extends BaseUI implements OnInit {
           this.ci = item.pi;
         }
         const CurrentStock = Number.parseInt(item.CurrentStock);
-        if (!Number.isInteger(CurrentStock) || CurrentStock <= 0) {
-          err = `Current boxes must be an integer greater than 0.`;
+        if (!Number.isInteger(CurrentStock) || CurrentStock < 0) {
+          err = `Current boxes must be an integer greater than or equal to zero.`;
           this.ci = item.pi;
         }
         if (!item.pack_count) {
@@ -358,6 +358,8 @@ export class OutFlowPage extends BaseUI implements OnInit {
   }
 
   reset() {
+    if (this.setp > 0)
+      this.setp = 0;
     this.errors = [];
     this.data = [];
   }

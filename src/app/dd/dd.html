@@ -1,14 +1,12 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Runsheet Search</ion-title>
+    <ion-title>Runsheet</ion-title>
     <ion-buttons slot="start">
       <ion-button color="light" icon-only (click)="back()">
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button color="light">Current user: {{userName}}</ion-button>
-    </ion-buttons>
+    <ion-label slot="end" color="light" style="font-size: 60%;">{{userName+"　"}}</ion-label>
   </ion-toolbar>
 </ion-header>
 
@@ -35,9 +33,9 @@
   <ion-list>
     <ion-item *ngFor="let item of data">
       <ion-label>
-        <h2>Runsheet No：<strong>{{item.runsheet_code}}</strong></h2>
+        <h2><strong>{{item.runsheet_code}}</strong></h2>
         <h3>Publish Time:{{item.publish_time|date:'MM-dd HH:mm'}}</h3>
-        <h3>Runsheet Status:{{item.sheet_status_name}}</h3>
+        <h3>Status:{{item.sheet_status_name}}</h3>
       </ion-label>
     </ion-item>
   </ion-list>

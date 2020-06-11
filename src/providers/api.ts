@@ -8,11 +8,11 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class Api {
   public plant = 'MG01';
-  public version = 'T-191230';
+  public version = 'T-0315';
   // public api_host = 'http://localhost:49280';
-  public api_host: string = 'http://localhost/lesapi';
-  // public api_host: string = 'http://10.1.126.171/lesapi';
-  // public api_host: string = 'http://10.34.243.14/lesapi';
+  // public api_host: string = 'http://localhost/lesapi';
+  // public api_host: string = 'http://123.57.224.71/mgiapi';
+  public api_host: string = 'http://10.10.140.26/mgiapi';
 
   url: string = this.api_host + '/api';
 
