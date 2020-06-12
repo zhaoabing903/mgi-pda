@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 
 /**
  * Api is a generic REST Api handler. Set your API url first.
@@ -12,14 +12,11 @@ export class Api {
   // public api_host = 'http://localhost:49280';
   // public api_host: string = 'http://localhost/lesapi';
   // public api_host: string = 'http://123.57.224.71/mgiapi';
-  public api_host: string = 'http://10.10.140.26/mgiapi';
 
-  url: string = this.api_host + '/api';
-
+  url: string = environment.api_host + '/api';
 
   constructor(
-    public http: HttpClient,
-    // public cdr:ChangeDetectorRef,
+    public http: HttpClient
   ) {
 
   }

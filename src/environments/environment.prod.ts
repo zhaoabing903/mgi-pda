@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  api_host: 'http://10.10.140.26/mgiapi'
 };
