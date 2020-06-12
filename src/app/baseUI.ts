@@ -15,13 +15,6 @@ export abstract class BaseUI {
   loadStatus = false;
   constructor() {}
 
-  /**
-   * loading加载页面
-   * @param {LoadingController} loadingCtrl
-   * @param {string} message
-   * @returns {Loading}
-   * @memberof BaseUI
-   */
   protected async showLoading(loadingCtrl: LoadingController, message: string) {
     this.loadStatus = true;
     const loader = await loadingCtrl.create({
@@ -48,13 +41,8 @@ export abstract class BaseUI {
       // console.log('dismissed');
     });
   }
-  /**
-   * Toast全局提示
-   * @param {ToastController} toastCtrl
-   * @param {string} message
-   * @returns {toast}
-   * @memberof BaseUI
-   */
+
+
   protected async showToast(
     toastCtrl: ToastController,
     message: string,
