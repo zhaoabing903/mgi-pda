@@ -32,3 +32,5 @@ ionic cordova build android --prod --release
 ## 3.增加签名
 
 jarsigner -verbose -keystore mgiles.keystore -signedjar D:\work\ionic\mgi-pda\platforms\android\app\build\outputs\apk\release\appRelease7.1.0.apk D:\work\ionic\mgi-pda\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk mgiles.keystore
+
+jarsigner -verbose -keystore mgiles.keystore -signedjar D:\Work\GitHub\mgi-pda\platforms\android\app\build\outputs\apk\release\appRelease7.1.0.apk D:\Work\GitHub\mgi-pda\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk mgiles.keystore
