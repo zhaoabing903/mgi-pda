@@ -12,47 +12,62 @@ import {
 //  * @class BaseUI
 //  */
 export abstract class BaseUI {
-  constructor() { }
+  loadStatus = false;
+  constructor() {}
 
-  // /**
-  //  * 通用的展示 loading 的组件
-  //  *
-  //  * @protected
-  //  * @param {LoadingController} loadingCtrl
-  //  * @param {string} message
-  //  * @returns {Loading}
-  //  * @memberof BaseUI
-  //  */
-  async showLoading(loadingCtrl: LoadingController, msg: string) {
+  /**
+   * loading加载页面
+   * @param {LoadingController} loadingCtrl
+   * @param {string} message
+   * @returns {Loading}
+   * @memberof BaseUI
+   */
+  protected async showLoading(loadingCtrl: LoadingController, message: string) {
+    this.loadStatus = true;
     const loader = await loadingCtrl.create({
-      message: msg,
-      keyboardClose: true,
-      backdropDismiss: true // 页面变化的时候自动关闭 loading
+      message
+    }).then(a => {
+      a.present().then(() => {
+        // console.log('presented');
+        if (!this.loadStatus) {
+          a.dismiss().then(() => {
+            // console.log('abort presenting');
+          });
+        }
+      });
     });
-    // return await loader.present();
+    // await loader.present();
     return loader;
   }
+  protected async closeLoading(loadingCtrl: LoadingController) {
+    // if (this.loadStatus) { await loadingCtrl.dismiss(); }
+    // this.loadStatus = false;
 
-  // /**
-  //  * 通用的展示 toast 的组件
-  //  *
-  //  * @protected
-  //  * @param {ToastController} toastCtrl
-  //  * @param {string} message
-  //  * @returns {Toast}
-  //  * @memberof BaseUI
-  //  */
-  async showToast(toastCtrl: ToastController, msg: string, css?: string) {
-    const toast = await toastCtrl.create({
-      message: msg,
-      duration: 5000, // 默认展示的时长
-      position: 'bottom',
-      cssClass: css ? css : 'tip',
-      showCloseButton: true,
-      closeButtonText: 'close'
+    this.loadStatus = false;
+    return await loadingCtrl.dismiss().then(() => {
+      // console.log('dismissed');
     });
-    toast.present();
-    // return toast;
+  }
+  /**
+   * Toast全局提示
+   * @param {ToastController} toastCtrl
+   * @param {string} message
+   * @returns {toast}
+   * @memberof BaseUI
+   */
+  protected async showToast(
+    toastCtrl: ToastController,
+    message: string,
+    color = 'dark'
+  ) {
+    const toast = await toastCtrl.create({
+      message,
+      duration: 5000, // 默认展示的时长
+      position: 'top',
+      color
+    });
+    await toast.present();
+    return toast;
   }
 
   async showMessageBox(

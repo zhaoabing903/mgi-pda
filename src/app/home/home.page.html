@@ -4,8 +4,8 @@
     <ion-title>Homepage <small>{{username}}</small></ion-title>
     <ion-buttons  slot="end">
  
-      <ion-button icon-only (click)="logout()" color="primary" fill="solid">
-        <ion-icon name="ios-power">登出</ion-icon>
+      <ion-button (click)="logout()" color="light">
+        Logout
       </ion-button>
       <!-- <ion-button icon-only (click)="goSetting()" color="primary" fill="solid">
         <ion-icon name="ios-settings"></ion-icon>
@@ -16,7 +16,7 @@
 </ion-header>
 
 <ion-content>
-  <ion-grid text-center>
+  <ion-grid text-center *ngIf="gridList.length">
     <ion-row *ngFor="let rowList of getRowListByGridList(2)">
       <ion-col *ngFor="let item of rowList">
         <button (click)="openItem(item)">
@@ -26,6 +26,9 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <ion-text text-center color="danger" *ngIf="!gridList.length">
+    <h2>You have no permission or No internet connections.</h2>
+  </ion-text>
 </ion-content>
 
 <ion-footer >

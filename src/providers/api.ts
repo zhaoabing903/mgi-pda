@@ -8,7 +8,7 @@ import { environment } from '../environments/environment';
 @Injectable()
 export class Api {
   public plant = 'MG01';
-  public version = 'T-0315';
+  // public version = 'T-0315';
   // public api_host = 'http://localhost:49280';
   // public api_host: string = 'http://localhost/lesapi';
   // public api_host: string = 'http://123.57.224.71/mgiapi';

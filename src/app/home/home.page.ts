@@ -10,6 +10,7 @@ import { Api, Menus, User } from '../../providers';
 import { BaseUI } from '../baseUI';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -20,7 +21,7 @@ export class HomePage extends BaseUI implements OnInit {
   gridList: any[] = [];
   workshop: string;
   username: string;
-  version: string;
+  version = environment.version;
   constructor(
     public router: Router,
     public items: Menus,
@@ -41,8 +42,6 @@ export class HomePage extends BaseUI implements OnInit {
     //   this.username = res;
     // });
     // this.username = this.user._user.username;
-
-    this.version = this.api.version;
   }
 
   ngOnInit() {
@@ -60,16 +59,16 @@ export class HomePage extends BaseUI implements OnInit {
 
     this.api.get('system/getMenus').subscribe(
       (res: any) => {
+        super.closeLoading(this.loadingCtrl);
         if (res.successful) {
           this.gridList = res.data;
         } else {
-          super.showToast(this.toastCtrl, res.message, 'error');
+          super.showToast(this.toastCtrl, res.message, 'danger');
         }
-        this.loadingCtrl.dismiss();
       },
       err => {
-        super.showToast(this.toastCtrl, 'System Error, Please check your network.', 'error');
-        this.loadingCtrl.dismiss();
+        super.closeLoading(this.loadingCtrl);
+        super.showToast(this.toastCtrl, 'System Error, Please check your network.', 'danger');
       }
     );
   }

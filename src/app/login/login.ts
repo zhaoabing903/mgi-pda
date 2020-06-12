@@ -4,11 +4,11 @@ import {
   LoadingController,
   ToastController
 } from '@ionic/angular';
-
+import { environment } from '../../environments/environment';
 import { Api, User } from '../../providers';
 import { BaseUI } from '../';
 import { Router } from '@angular/router';
-import { NgForm } from '@angular/forms';
+// import { NgForm } from '@angular/forms';
 // import {Storage} from '@ionic/storage';
 
 @Component({
@@ -18,8 +18,9 @@ import { NgForm } from '@angular/forms';
 export class LoginPage extends BaseUI {
   @ViewChild('userName', { static: false }) usernameInput: any;
   // workshops: any[] = [];
-  version: string;
   workshop: string;
+  api_host = environment.api_host;
+  version = environment.version;
   account: { name: string; password: string } = {
     name: '',
     password: ''
@@ -35,7 +36,6 @@ export class LoginPage extends BaseUI {
     public api: Api
   ) {
     super();
-    this.version = this.api.version;
   }
 
   ionViewDidLoad() {
@@ -68,14 +68,14 @@ export class LoginPage extends BaseUI {
 
     this.user.login(this.account).subscribe(
       resp => {
-        this.loadingCtrl.dismiss();
+        super.closeLoading(this.loadingCtrl);
         this.user._loggedIn(resp);
 
         setTimeout(() => this.injector.get(Router).navigateByUrl('/home'));
       },
       err => {
-        this.loadingCtrl.dismiss();
-        super.showToast(this.toastCtrl, 'Login failed, ' + err);
+        super.closeLoading(this.loadingCtrl);
+        super.showToast(this.toastCtrl, 'Login failed, ' + err, 'danger');
       }
     );
   }
