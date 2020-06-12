@@ -65,24 +65,24 @@ export class GlobalHttpIntercept implements HttpInterceptor {
         }
         break;
       case 401: // 未登录状态码
-        errMsg = '登录超时，请重新登录';
+        errMsg = 'Login timeout or not logged, please login again';
         this.goTo('/login');
         break;
       case 403:
         errMsg = '403 ERROR.';
         break;
       case 404:
-        errMsg = '不存在的访问请求';
+        errMsg = 'The service is not exists.(404)';
         break;
       case 500:
         if (event['error'].msg) {
           errMsg = event['error'].msg;
         }
-        errMsg = '未知错误';
+        errMsg = 'Service Error.(500)';
         break;
       default:
         if (event instanceof HttpErrorResponse) {
-          errMsg = '未可知错误，大部分是由于后端不支持CORS或无效配置引起';
+          errMsg = 'Unknown Error, Please contact the system admin';
         }
         break;
     }

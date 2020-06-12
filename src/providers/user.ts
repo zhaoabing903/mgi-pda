@@ -1,8 +1,8 @@
 // import 'rxjs/add/operator/toPromise';
 
-import {Injectable, Injector} from '@angular/core';
-import {Storage} from '@ionic/storage';
-import {Api} from './api';
+import { Injectable, Injector } from '@angular/core';
+import { Storage } from '@ionic/storage';
+import { Api } from './api';
 import { Router } from '@angular/router';
 
 /**
@@ -17,7 +17,7 @@ import { Router } from '@angular/router';
  * {
  *   status: 'success',
  *   user: {
- *     // User fields your app needs, like "id", "name", "email", etc.
+ *     // User fields your app needs, like 'id', 'name', 'email', etc.
  *   }
  * }Ø
  * ```
@@ -26,41 +26,45 @@ import { Router } from '@angular/router';
  */
 @Injectable()
 export class User {
-  //_user: any;
+  // _user: any;
 
   constructor(
     public api: Api,
     private injector: Injector,
-    private storage: Storage,
-    ) {  }
+    private storage: Storage
+  ) {}
 
-  login(accountInfo: any) :any{
+  login(accountInfo: any): any {
     return this.api.get('account/login', accountInfo);
   }
 
-
-  logout():any {
-    let seq = this.api.post('account/logout', null).subscribe((res: any) => {
-      // this.storage.remove('TOKEN').then(res => {
-      //   this._user = null;
-      // });
-      window.localStorage.removeItem('TOKEN');
-      this.storage.clear();
-      setTimeout(() => this.injector.get(Router).navigateByUrl('/login'));        
-
-    }, err => {
-      console.error('ERROR', err);
-    });
-    return seq;
+  logout(): any {
+    // let seq = this.api.post('account/logout', null).subscribe(
+    //   (res: any) => {
+        // this.storage.remove('TOKEN').then(res => {
+        //   this._user = null;
+        // });
+        window.localStorage.removeItem('TOKEN');
+        this.storage.clear();
+        setTimeout(() => this.injector.get(Router).navigateByUrl('/login'));
+    //   },
+    //   (err) => {
+    //     console.error('ERROR', err);
+    //   }
+    // );
+    // return seq;
   }
 
   /**
    * Process a login/signup response to store user data
    */
   _loggedIn(resp) {
-    //this.storage.set('TOKEN', `${resp.token_type} ${resp.access_token}`).then();
-    window.localStorage.setItem('TOKEN', `${resp.token_type} ${resp.access_token}`);
+    // this.storage.set('TOKEN', `${resp.token_type} ${resp.access_token}`).then();
+    window.localStorage.setItem(
+      'TOKEN',
+      `${resp.token_type} ${resp.access_token}`
+    );
     this.storage.set('USER_INFO', resp.user_name).then();
-    //this._user = resp;
+    // this._user = resp;
   }
 }

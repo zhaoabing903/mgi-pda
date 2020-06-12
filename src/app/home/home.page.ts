@@ -68,7 +68,7 @@ export class HomePage extends BaseUI implements OnInit {
         this.loadingCtrl.dismiss();
       },
       err => {
-        super.showToast(this.toastCtrl, 'You are not signed in.', 'error');
+        super.showToast(this.toastCtrl, 'System Error, Please check your network.', 'error');
         this.loadingCtrl.dismiss();
       }
     );
