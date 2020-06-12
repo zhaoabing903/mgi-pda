@@ -17,9 +17,7 @@ export class Api {
 
   constructor(
     public http: HttpClient
-  ) {
-
-  }
+  ) { }
 
   get(endpoint: string, params?: any, reqOpts?: any) {
     if (!reqOpts) {
