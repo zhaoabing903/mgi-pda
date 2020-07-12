@@ -10,7 +10,6 @@ import {
 import { BaseUI } from '../baseUI';
 import { Api } from '../../providers';
 import { Storage } from '@ionic/storage';
-// import {fromEvent} from 'rxjs/observable/fromEvent';
 
 @Component({
   selector: 'page-DD',
@@ -24,10 +23,16 @@ export class DDPage extends BaseUI implements OnInit {
   barTextHolderText = 'Please scan the label'; // 扫描文本框placeholder属性
   workshopList = [];
   supplierList = [];
+  statusList = [
+  {value: '1', text: 'Waiting Send.' },
+  {value: '10', text: 'Processed' },
+  {value: '200', text: 'Normal Receipt' },
+  {value: '210', text: 'Difference Receipt' }];
   q: any = {
     plant: '', // 工厂
     workshop: '', // 车间
     supplier: '',
+    status: null,
     pi: 1,
     ps: 20
   };
@@ -101,46 +106,38 @@ export class DDPage extends BaseUI implements OnInit {
       this.getWorkshops(val);
     });
     this.storage.get(this.userInfo).then(val => {
-      this.userName = val
+      this.userName = val;
     });
   }
 
   private getWorkshops(val) {
-    // let loading = super.showLoading(this.loadingCtrl, '加载中...');
     this.api.get('system/getPlants', { plant: this.api.plant, type: 0 })
       .subscribe(
         (res: any) => {
           if (res.successful) {
             this.workshopList = res.data;
-            this.workshopList.unshift({ value: '', text: "--" });
+            this.workshopList.unshift({ value: '', text: '--' });
             if (val) {
               this.q.workshop = val;
-              // this.selectworkshop.selectedText = this.workshopList.find(p => p.value === this.q.workshop).text;
             } else {
               this.q.workshop = this.workshopList[0].value;
-              // debugger
             }
             this.changeWorkshop(this.q.workshop);
           } else {
-            // super.showToast(this.toastCtrl, res.message, 'error');
             this.insertError(res.message);
           }
           this.setFocus();
-          // loading.dismiss();
         },
         err => {
           this.insertError('System error!', 1);
           this.setFocus();
-          // loading.dismiss();
         }
       );
   }
 
   changeWorkshop(e) {
-    const item = this.workshopList.find(p => p.value === this.q.workshop)
+    const item = this.workshopList.find(p => p.value === this.q.workshop);
     if (item) {
-      // if (e.target.selectedText)
-      //   e.target.selectedText = item.text;
       this.q.supplier = '';
       this.data = [];
       this.getSuppliers();
@@ -159,15 +156,12 @@ export class DDPage extends BaseUI implements OnInit {
             if (pts.length > 0) {
               this.supplierList = pts;
             }
-            this.supplierList.unshift({ value: '', text: "--" });
+            this.supplierList.unshift({ value: '', text: '--' });
           } else {
-            // super.showToast(this.toastCtrl, res.message, 'error');
             this.insertError(res.message);
           }
         },
         error => {
-          // loading.dismiss();
-          // super.showToast(this.toastCtrl, '系统错误', 'error');
           this.insertError('System error!', 1);
           this.setFocus();
         }
@@ -180,27 +174,40 @@ export class DDPage extends BaseUI implements OnInit {
       }
       this.hasMore = false;
     }
-
+  }
+  // 执行下拉刷新
+  doInfinite(e) {
+    // 如果是第一页，则隐藏ion-infinite-scroll，即“正在加载更多”
+    if (this.q.pi === 1) {
+        e.target.complete();
+        e.target.disabled = false;
+    } else {
+      // 如果不是第一页，则继续刷新（调用getDatas（方法））
+        this.getDatas(e);
+    }
   }
   getDatas(e) {
-    this.api.post('dd/GetRunsheet', this.q)
+    const that = this;
+    this.api.post('dd/getRunsheet', that.q)
       .subscribe(
         (res: any) => {
           if (res.successful) {
-            if (!e) {
-              this.data = res.data;
-              this.q.pi = 1;
-              this.setMore(e, res.data.length);
-            } else {
-              this.data = this.data.concat(res.data);
-              ++this.q.pi;
-              this.setMore(e, res.data.length);
-              if (e) {
-                e.target.complete();
+            const ds = res.data;
+            const pc = this.pageCount(ds.total, that.q.ps);
+            if (that.q.pi === pc) {
+              that.hasMore = false;
+            }
+            that.data = that.data.concat(ds.rows);
+            // 每次刷新完，都把正在刷新隐藏起来
+            if (e) {
+              e.target.complete();
+              if (that.q.pi === pc) {
+                e.target.disabled = false;
               }
             }
+            that.q.pi++;
           } else {
-            super.showToast(this.toastCtrl, res.message, 'danger');
+            super.showToast(that.toastCtrl, res.message, 'danger');
           }
         },
         error => {
@@ -209,7 +216,9 @@ export class DDPage extends BaseUI implements OnInit {
         }
       );
   }
-
+  pageCount(totalCount: number, pageSize: number) {
+    return (totalCount + pageSize - 1) / pageSize;
+  }
   back() {
     this.navCtrl.back();
   }

@@ -10,7 +10,6 @@ import {
 import { BaseUI } from '../baseUI';
 import { Api } from '../../providers';
 import { Storage } from '@ionic/storage';
-// import {fromEvent} from 'rxjs/observable/fromEvent';
 
 @Component({
   selector: 'page-OutFlow',
@@ -18,11 +17,6 @@ import { Storage } from '@ionic/storage';
   styleUrls: ['outflow.scss']
 })
 
-// @Component({
-//   selector: 'page-OutFlow',
-//   templateUrl: 'page.page.html',
-//   styleUrls: ['home.page.scss'],
-// })
 export class OutFlowPage extends BaseUI implements OnInit {
   @ViewChild('searchbar', { static: false }) searchbar: any;
   @ViewChild('flowtubeList', { static: true }) flowtubeList: IonList;
@@ -108,7 +102,7 @@ export class OutFlowPage extends BaseUI implements OnInit {
       this.getWorkshops(val);
     });
     this.storage.get(this.userInfo).then(val => {
-      this.userName = val
+      this.userName = val;
     });
   }
 
@@ -141,9 +135,10 @@ export class OutFlowPage extends BaseUI implements OnInit {
       );
   }
   changeWorkshop(e) {
-    const item = this.workshopList.find(p => p.value === this.q.workshop)
-    if (item)
+    const item = this.workshopList.find(p => p.value === this.q.workshop);
+    if (item) {
       e.target.selectedText = item.text;
+    }
   }
 
   // 扫箱
@@ -162,7 +157,7 @@ export class OutFlowPage extends BaseUI implements OnInit {
         p.card_code === this.q.label
     );
     if (i) {
-      this.ci = i.pi
+      this.ci = i.pi;
       this.setFocus();
       return;
     }
@@ -267,12 +262,14 @@ export class OutFlowPage extends BaseUI implements OnInit {
   }
   // 非标跳转Modal页
   changeQty(item) {
-    if (item.pack_count)
+    if (item.pack_count) {
       item.part_count = item.packing_qty * item.pack_count;
+    }
   }
   changeStock(item) {
-    if (item.CurrentStock)
-      item.pack_count = item.MaxStock - item.CurrentStock
+    if (item.CurrentStock) {
+      item.pack_count = item.MaxStock - item.CurrentStock;
+    }
   }
 
   // 出库
@@ -283,7 +280,7 @@ export class OutFlowPage extends BaseUI implements OnInit {
     }
 
     if (this.setp < 1) {
-      //验证
+      // 验证
       let err = '';
       if (!this.q.workshop) {
         err = 'Please select the target workshop first';
@@ -293,13 +290,14 @@ export class OutFlowPage extends BaseUI implements OnInit {
         err = 'Please scan parts';
         this.insertError(err, 1);
       }
-      //current stock和request qty必填
+      // current stock和request qty必填
       for (let j = 0, len = this.data.length; j < len; j++) {
         const item = this.data[j];
         if (!item.CurrentStock) {
           err = `Current boxes cannot be empty.`;
           this.ci = item.pi;
         }
+        // tslint:disable-next-line: radix
         const CurrentStock = Number.parseInt(item.CurrentStock);
         if (!Number.isInteger(CurrentStock) || CurrentStock < 0) {
           err = `Current boxes must be an integer greater than or equal to zero.`;
@@ -309,6 +307,7 @@ export class OutFlowPage extends BaseUI implements OnInit {
           err = `Require boxes cannot be empty.`;
           this.ci = item.pi;
         }
+        // tslint:disable-next-line: radix
         const packCount = Number.parseInt(item.pack_count);
         if (!Number.isInteger(packCount) || packCount <= 0) {
           err = `Require boxes must be an integer greater than 0.`;
@@ -324,9 +323,9 @@ export class OutFlowPage extends BaseUI implements OnInit {
         return;
       }
 
-      //显示确认页
-      this.setp = this.setp + 1
-      return
+      // 显示确认页
+      this.setp = this.setp + 1;
+      return;
     }
 
     // let loading = super.showLoading(this.loadingCtrl, '正在提交...');
@@ -358,23 +357,26 @@ export class OutFlowPage extends BaseUI implements OnInit {
   }
 
   reset() {
-    if (this.setp > 0)
+    if (this.setp > 0) {
       this.setp = 0;
+    }
     this.errors = [];
     this.data = [];
   }
   back() {
-    if (this.setp === 0)
+    if (this.setp === 0) {
       this.navCtrl.back();
-    else
+    } else {
       this.setp = this.setp - 1;
+    }
   }
 
   setFocus() {
     this.q.label = '';
     setTimeout(() => {
-      if (this.searchbar)
+      if (this.searchbar) {
         this.searchbar.setFocus();
+      }
     }, 200);
   }
 }

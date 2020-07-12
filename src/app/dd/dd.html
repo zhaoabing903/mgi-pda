@@ -27,6 +27,13 @@
           <ion-select-option *ngFor="let t of supplierList" value="{{t.value}}">{{t.text}}</ion-select-option>
         </ion-select>
       </ion-item>
+      <ion-item>
+        <ion-label>Status</ion-label>
+        <ion-select interface="action-sheet" name="status" (ionChange)="changeSupplier($event)"
+          [(ngModel)]="q.status" placeholder="Please choose status">
+          <ion-select-option *ngFor="let t of statusList" value="{{t.value}}">{{t.text}}</ion-select-option>
+        </ion-select>
+      </ion-item>
     </ion-list>
   </form>
 
@@ -39,12 +46,11 @@
       </ion-label>
     </ion-item>
   </ion-list>
-  <ion-infinite-scroll threshold="5%" (ionInfinite)="getDatas($event)">
-    <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Loading...">
+  <ion-infinite-scroll threshold="150px" (ionInfinite)="doInfinite($event)" immediate-check="false">
+    <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
   <p class="end" *ngIf="!hasMore">---No more records---</p>
-
 
 </ion-content>
 
