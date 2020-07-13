@@ -164,12 +164,11 @@ export class OutFlowPage extends BaseUI implements OnInit {
 
     // 不存在的零件，查询出零件信息，再push到list中
     // let loading = super.showLoading(this.loadingCtrl, '加载中...');
-    this.api.post('dd/getScanFlow', {
+    this.api.get('dd/getScanFlow', {
       plant: this.q.plant,
       workshop: this.q.workshop,
-      ScanCode: this.q.label
-    })
-      .subscribe(
+      scanCode: this.q.label
+    }).subscribe(
         (res: any) => {
           if (res.successful) {
             const pts = res.data;

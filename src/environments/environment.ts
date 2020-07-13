@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  api_host: 'http://10.10.140.26/mgiapi',
-  version: '200710'
+  api_host: 'http://localhost:49280/',
+  version: '200713'
 };
 
 /*

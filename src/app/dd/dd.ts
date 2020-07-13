@@ -18,7 +18,6 @@ import { Storage } from '@ionic/storage';
 })
 
 export class DDPage extends BaseUI implements OnInit {
-
   fetching = false;
   barTextHolderText = 'Please scan the label'; // 扫描文本框placeholder属性
   workshopList = [];
@@ -36,6 +35,7 @@ export class DDPage extends BaseUI implements OnInit {
     pi: 1,
     ps: 20
   };
+  totalPages = 0;
   data: any[] = [];
 
   keyPressed: any;
@@ -141,11 +141,11 @@ export class DDPage extends BaseUI implements OnInit {
       this.q.supplier = '';
       this.data = [];
       this.getSuppliers();
-      this.getDatas(null);
+      this.getDatas(false);
     }
   }
   changeSupplier(e) {
-    this.getDatas(null);
+    this.getDatas(false);
   }
   getSuppliers() {
     this.api.get('system/GetSuppliers', this.q)
@@ -187,37 +187,59 @@ export class DDPage extends BaseUI implements OnInit {
     }
   }
   getDatas(e) {
+    if (!e) {
+      this.q.pi = 1;
+    }
     const that = this;
-    this.api.post('dd/getRunsheet', that.q)
-      .subscribe(
-        (res: any) => {
-          if (res.successful) {
-            const ds = res.data;
-            const pc = this.pageCount(ds.total, that.q.ps);
-            if (that.q.pi === pc) {
-              that.hasMore = false;
-            }
-            that.data = that.data.concat(ds.rows);
-            // 每次刷新完，都把正在刷新隐藏起来
-            if (e) {
-              e.target.complete();
-              if (that.q.pi === pc) {
-                e.target.disabled = false;
-              }
-            }
-            that.q.pi++;
-          } else {
-            super.showToast(that.toastCtrl, res.message, 'danger');
-          }
-        },
-        error => {
-          this.insertError('System error!', 1);
-          this.setFocus();
+    super.showLoading(this.loadingCtrl, 'Fetching data...');
+    this.api.get('dd/getRunsheet', that.q).subscribe((res: any) => {
+      super.closeLoading(that.loadingCtrl);
+      if (res.successful) {
+        const ds = res.data;
+        const pc = this.pageCount(ds.total, that.q.ps);
+        this.totalPages = pc;
+        if (that.q.pi === pc) {
+          that.hasMore = false;
         }
-      );
+        // if (that.q.pi === 1) {
+        that.data = ds.rows;
+        // } else {
+        //   that.data = that.data.concat(ds.rows);
+        // }
+        // 每次刷新完，都把正在刷新隐藏起来
+        // if (e) {
+        //   e.target.complete();
+        //   if (that.q.pi === pc) {
+        //     e.target.disabled = false;
+        //   }
+        // }
+        // that.q.pi++;
+      } else {
+        super.showToast(that.toastCtrl, res.message, 'danger');
+      }
+    },
+    error => {
+      super.closeLoading(that.loadingCtrl);
+      this.insertError('System error!', 1);
+      this.setFocus();
+    });
+  }
+  switchPart(t: number) {
+    this.q.pi = this.q.pi + t;
+    this.getDatas(true);
   }
   pageCount(totalCount: number, pageSize: number) {
-    return (totalCount + pageSize - 1) / pageSize;
+    // console.log( "总条数" + totalCount + "每页总条数" + pageSize)
+    if (totalCount == null || totalCount === 0) {
+      return 0;
+    } else {
+      if (pageSize !== 0 && totalCount % pageSize === 0) {
+        return parseInt((totalCount / pageSize).toString(), 10);
+      }
+      if (pageSize !== 0 && totalCount % pageSize !== 0) {
+        return parseInt((totalCount / pageSize).toString(), 10) + 1;
+      }
+    }
   }
   back() {
     this.navCtrl.back();

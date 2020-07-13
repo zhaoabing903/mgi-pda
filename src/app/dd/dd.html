@@ -46,10 +46,16 @@
       </ion-label>
     </ion-item>
   </ion-list>
-  <ion-infinite-scroll threshold="150px" (ionInfinite)="doInfinite($event)" immediate-check="false">
+  <!-- <ion-infinite-scroll threshold="15%" (ionInfinite)="doInfinite($event)">
     <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
-  </ion-infinite-scroll>
+  </ion-infinite-scroll> -->
+  <ion-item *ngIf="totalPages>1">
+    <ion-button item-start (click)="switchPart(-1)" [disabled]="q.pi===1">Prev Page</ion-button>
+    <ion-label class="ion-text-center">{{q.pi}} / {{totalPages}}</ion-label>
+    <ion-button item-end (click)="switchPart(1)" [disabled]="q.pi>=totalPages-1">Next Page</ion-button>
+  </ion-item>
+  
   <p class="end" *ngIf="!hasMore">---No more records---</p>
 
 </ion-content>
