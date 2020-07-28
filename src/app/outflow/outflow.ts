@@ -55,40 +55,6 @@ export class OutFlowPage extends BaseUI implements OnInit {
     super();
   }
 
-  keyDown(event) {
-    switch (event.keyCode) {
-      case 112:
-        // f1
-        this.submit();
-        break;
-      case 113:
-        // f2
-        this.reset();
-        break;
-    }
-  }
-
-  ionViewDidEnter() {
-    setTimeout(() => {
-      this.addkey();
-      this.searchbar.setFocus();
-    });
-  }
-
-  ionViewWillUnload() {
-    this.removekey();
-  }
-
-  addkey = () => {
-    // this.keyPressed = fromEvent(document, 'keydown').subscribe(event => {
-    //   this.keyDown(event);
-    // });
-  }
-
-  removekey = () => {
-    this.keyPressed.unsubscribe();
-  }
-
   insertError = (msg: string, t: number = 0) => {
     this.zone.run(() => {
       this.errors.splice(0, 0, { message: msg, type: t, time: new Date() });
@@ -163,7 +129,6 @@ export class OutFlowPage extends BaseUI implements OnInit {
     }
 
     // 不存在的零件，查询出零件信息，再push到list中
-    // let loading = super.showLoading(this.loadingCtrl, '加载中...');
     this.api.get('dd/getScanFlow', {
       plant: this.q.plant,
       workshop: this.q.workshop,
@@ -174,7 +139,6 @@ export class OutFlowPage extends BaseUI implements OnInit {
             const pts = res.data;
             if (pts.length > 0) {
               this.addData(pts);
-
               if (res.message) {
                 // 包装数不一致的提示信息
                 this.insertError(res.message, 1);
@@ -182,22 +146,17 @@ export class OutFlowPage extends BaseUI implements OnInit {
               this.setFocus();
             }
           } else {
-            // super.showToast(this.toastCtrl, res.message, 'error');
             this.insertError(res.message);
           }
-          // loading.dismiss();
           this.setFocus();
-        },
-        error => {
-          // loading.dismiss();
-          // super.showToast(this.toastCtrl, '系统错误', 'error');
-          this.insertError('System error!', 1);
+        }, error => {
+          this.insertError('System error!' + JSON.stringify(error), 1);
           this.setFocus();
         }
       );
   }
 
-  switchPart(i) {
+  switchPart(i: number) {
     if (i > 0) {
       if (this.ci < this.data.length - 1) {
         this.ci++;
@@ -327,32 +286,28 @@ export class OutFlowPage extends BaseUI implements OnInit {
       return;
     }
 
-    // let loading = super.showLoading(this.loadingCtrl, '正在提交...');
     this.insertError('Submitting, please wait...', 1);
     this.fetching = true;
-    this.api.post('dd/submitScanGroupFlow', this.data).subscribe(
-      (res: any) => {
-        this.fetching = false;
-        if (res.successful) {
-          this.data = [];
-          this.errors = [];
-          if (res.message) {
-            this.insertError(res.message);
-          } else {
-            this.insertError('Submit successfully', 2);
-          }
-        } else {
+    this.api.post('dd/submitScanGroupFlow', this.data).subscribe((res: any) => {
+      this.fetching = false;
+      if (res.successful) {
+        this.data = [];
+        this.errors = [];
+        if (res.message) {
           this.insertError(res.message);
+        } else {
+          this.insertError('Submit successfully', 2);
         }
-        // loading.dismiss();
-        this.setFocus();
-      },
-      error => {
-        this.fetching = false;
-        this.insertError('system error!');
-        this.setFocus();
+      } else {
+        this.insertError(res.message);
       }
-    );
+      this.setFocus();
+    },
+    error => {
+      this.fetching = false;
+      this.insertError('Submit error!' + JSON.stringify(error));
+      this.setFocus();
+    });
   }
 
   reset() {
