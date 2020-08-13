@@ -50,14 +50,13 @@
     <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll> -->
+  <p class="end" *ngIf="totalItems">Total: {{totalItems}} Items</p>
+  <ion-spinner name="crescent" *ngIf="fetching"></ion-spinner>
   <ion-item *ngIf="totalPages>1">
-    <ion-button item-start (click)="switchPart(-1)" [disabled]="q.pi===1">Prev Page</ion-button>
-    <ion-label class="ion-text-center">{{q.pi}} / {{totalPages}}</ion-label>
-    <ion-button item-end (click)="switchPart(1)" [disabled]="q.pi>=totalPages-1">Next Page</ion-button>
+    <ion-button item-start (click)="switchPage(-1)" [disabled]="q.pi===1">Prev</ion-button>
+    <ion-label class="ion-text-center">{{q.pi}} / {{totalPages}} Pages</ion-label>
+    <ion-button item-end (click)="switchPage(1)" [disabled]="q.pi>totalPages-1">Next</ion-button>
   </ion-item>
-  
-  <p class="end" *ngIf="!hasMore">---No more records---</p>
-
 </ion-content>
 
 <ion-footer>

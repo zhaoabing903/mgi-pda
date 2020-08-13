@@ -33,9 +33,10 @@ export class DDPage extends BaseUI implements OnInit {
     supplier: '',
     status: null,
     pi: 1,
-    ps: 20
+    ps: 10
   };
   totalPages = 0;
+  totalItems = 0;
   data: any[] = [];
 
   keyPressed: any;
@@ -126,11 +127,9 @@ export class DDPage extends BaseUI implements OnInit {
           } else {
             this.insertError(res.message);
           }
-          this.setFocus();
         },
         err => {
           this.insertError('System error!', 1);
-          this.setFocus();
         }
       );
   }
@@ -141,14 +140,14 @@ export class DDPage extends BaseUI implements OnInit {
       this.q.supplier = '';
       this.data = [];
       this.getSuppliers();
-      this.getDatas(false);
+      this.getDatas(true);
     }
   }
   changeSupplier(e) {
-    this.getDatas(false);
+    this.getDatas(true);
   }
   getSuppliers() {
-    this.api.get('system/GetSuppliers', this.q)
+    this.api.get('system/getSuppliers', this.q)
       .subscribe(
         (res: any) => {
           if (res.successful) {
@@ -163,7 +162,6 @@ export class DDPage extends BaseUI implements OnInit {
         },
         error => {
           this.insertError('System error!', 1);
-          this.setFocus();
         }
       );
   }
@@ -175,58 +173,38 @@ export class DDPage extends BaseUI implements OnInit {
       this.hasMore = false;
     }
   }
-  // 执行下拉刷新
-  doInfinite(e) {
-    // 如果是第一页，则隐藏ion-infinite-scroll，即“正在加载更多”
-    if (this.q.pi === 1) {
-        e.target.complete();
-        e.target.disabled = false;
-    } else {
-      // 如果不是第一页，则继续刷新（调用getDatas（方法））
-        this.getDatas(e);
-    }
-  }
-  getDatas(e) {
-    if (!e) {
+
+  getDatas(reload = false) {
+    if (reload) {
       this.q.pi = 1;
     }
     const that = this;
-    super.showLoading(this.loadingCtrl, 'Fetching data...');
-    this.api.get('dd/getRunsheet', that.q).subscribe((res: any) => {
-      super.closeLoading(that.loadingCtrl);
+    that.fetching = true;
+    that.totalItems = 0;
+    that.totalPages = 0;
+    that.api.get('dd/getRunsheet', that.q).subscribe((res: any) => {
+      that.fetching = false;
       if (res.successful) {
         const ds = res.data;
-        const pc = this.pageCount(ds.total, that.q.ps);
-        this.totalPages = pc;
+        const pc = that.pageCount(ds.total, that.q.ps);
+        that.totalPages = pc;
+        that.totalItems = ds.total;
         if (that.q.pi === pc) {
           that.hasMore = false;
         }
-        // if (that.q.pi === 1) {
         that.data = ds.rows;
-        // } else {
-        //   that.data = that.data.concat(ds.rows);
-        // }
-        // 每次刷新完，都把正在刷新隐藏起来
-        // if (e) {
-        //   e.target.complete();
-        //   if (that.q.pi === pc) {
-        //     e.target.disabled = false;
-        //   }
-        // }
-        // that.q.pi++;
       } else {
         super.showToast(that.toastCtrl, res.message, 'danger');
       }
     },
     error => {
-      super.closeLoading(that.loadingCtrl);
+      that.fetching = false;
       this.insertError('System error!', 1);
-      this.setFocus();
     });
   }
-  switchPart(t: number) {
+  switchPage(t: number) {
     this.q.pi = this.q.pi + t;
-    this.getDatas(true);
+    this.getDatas(false);
   }
   pageCount(totalCount: number, pageSize: number) {
     // console.log( "总条数" + totalCount + "每页总条数" + pageSize)
@@ -243,11 +221,5 @@ export class DDPage extends BaseUI implements OnInit {
   }
   back() {
     this.navCtrl.back();
-  }
-
-  setFocus() {
-    // setTimeout(() => {
-    //   this.searchbar.setFocus();
-    // }, 200);
   }
 }
